@@ -103,3 +103,14 @@ _tw_month_logic() {
 
 ### Adding New Categories
 If you create a completely new file (e.g., `docker.sh`), run `./install.sh` again to symlink the new file into your `~/.config/bash/aliases.d/` directory, then reload your shell. It will automatically be picked up by the `a` command's tab completion.
+
+## Uninstallation
+
+To remove the symlinks from your `~/.config/bash/` directory, simply run the uninstall script:
+
+```bash
+chmod +x uninstall.sh
+./uninstall.sh
+```
+
+Then, remove the autoload snippet you added to your `~/.bashrc` or `~/.zshrc`.
