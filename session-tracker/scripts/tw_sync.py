@@ -8,7 +8,7 @@ import argparse
 from datetime import datetime, timedelta
 import sys
 
-LOG_DIR = os.path.expanduser("~/scripts/logs")
+LOG_DIR = os.path.expanduser("~/.config/mooseware/logs")
 
 def run_tw(args):
     cmd = ["timew"] + args

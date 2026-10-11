@@ -3,7 +3,7 @@ import AppKit
 
 // Get the user's home directory to match the Linux log path
 let homeDir = FileManager.default.homeDirectoryForCurrentUser.path
-let logDir = "\(homeDir)/scripts/logs"
+let logDir = "\(homeDir)/.config/mooseware/logs"
 let formatter = DateFormatter()
 formatter.dateFormat = "yyyyMMdd_HHmmss"
 let startupTs = formatter.string(from: Date())
@@ -12,10 +12,14 @@ let logFile = "\(logDir)/Log_\(startupTs).txt"
 // Ensure log directory exists
 try? FileManager.default.createDirectory(atPath: logDir, withIntermediateDirectories: true, attributes: nil)
 
+let logTimestampFormatter: DateFormatter = {
+    let df = DateFormatter()
+    df.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+    return df
+}()
+
 func writeLog(_ message: String, type: String = "INFO") {
-    let tsFormatter = DateFormatter()
-    tsFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-    let ts = tsFormatter.string(from: Date())
+    let ts = logTimestampFormatter.string(from: Date())
     
     let logMessage = "\(ts) [\(type)] - \(message)\n"
     

@@ -9,8 +9,10 @@ if [ "$(uname)" = "Darwin" ]; then
         # Unload the service
         launchctl unload "$PLIST_DEST" 2>/dev/null
         
-        # Remove the plist
-        rm "$PLIST_DEST"
+        # Remove the plist and compiled binary
+        rm -f "$PLIST_DEST"
+        rm -f "$HOME/.config/mooseware/bin/SessionTracker"
+        rm -f "$HOME/.config/mooseware/bin/tw_sync.py"
         echo "macOS Session Tracker uninstalled successfully."
     else
         echo "Service plist not found at $PLIST_DEST. Is it already uninstalled?"

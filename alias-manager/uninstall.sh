@@ -1,23 +1,18 @@
 #!/usr/bin/env bash
 set -e
 
-TARGET_DIR="$HOME/.config/bash"
+TARGET_DIR="$HOME/.config/mooseware"
 TARGET_ALIASES_DIR="$TARGET_DIR/aliases.d"
 
 echo "🦌 Uninstalling Moosetilities Alias Manager..."
 
-# Remove symlinks
-if [ -d "$TARGET_ALIASES_DIR" ]; then
-    echo "Removing linked alias groups..."
-    rm -f "$TARGET_ALIASES_DIR"/*.sh
-    # Optionally remove directory if empty
-    rmdir "$TARGET_ALIASES_DIR" 2>/dev/null || true
+if [ -f "$TARGET_DIR/alias-manager.sh" ]; then
+    echo "Removing alias-manager.sh core engine..."
+    rm -f "$TARGET_DIR/alias-manager.sh"
 fi
 
-if [ -f "$TARGET_DIR/alias-manager.sh" ]; then
-    echo "Removing alias-manager.sh link..."
-    rm -f "$TARGET_DIR/alias-manager.sh"
-    rmdir "$TARGET_DIR" 2>/dev/null || true
+if [ -d "$TARGET_ALIASES_DIR" ]; then
+    echo "Notice: Leaving your personal alias files safely intact in $TARGET_ALIASES_DIR"
 fi
 
 echo ""

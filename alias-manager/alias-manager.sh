@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 a() {
-    local alias_dir="$HOME/.config/bash/aliases.d"
+    local alias_dir="$HOME/.config/mooseware/aliases.d"
     
     # If no argument, list available categories (file names without .sh)
     if [ -z "$1" ]; then
@@ -30,7 +30,12 @@ a() {
     /^[[:space:]]*alias / { 
         line = $0;
         sub(/^[[:space:]]*alias /, "", line);
-        print "  " line 
+        if (help) {
+            printf "  %s\n      \033[36m%s\033[0m\n", help, line;
+            help = ""
+        } else {
+            print "  " line 
+        }
     }
     
     # Print functions and append the help string if it exists.
@@ -53,7 +58,10 @@ a() {
 if [ -n "$ZSH_VERSION" ]; then
     # Zsh completion logic
     _a_completions_zsh() {
-        local alias_dir="$HOME/.config/bash/aliases.d"
+        if [[ $CURRENT -gt 2 ]]; then
+            return
+        fi
+        local alias_dir="$HOME/.config/mooseware/aliases.d"
         local -a available_groups
         available_groups=($(ls -1 "$alias_dir" 2>/dev/null | grep '\.sh$' | sed 's/\.sh$//'))
         compadd -a available_groups
@@ -63,7 +71,11 @@ if [ -n "$ZSH_VERSION" ]; then
 elif [ -n "$BASH_VERSION" ]; then
     # Bash completion logic
     _a_completions() {
-        local alias_dir="$HOME/.config/bash/aliases.d"
+        if [ "$COMP_CWORD" -gt 1 ]; then
+            COMPREPLY=()
+            return
+        fi
+        local alias_dir="$HOME/.config/mooseware/aliases.d"
         local available_groups=$(ls -1 "$alias_dir" 2>/dev/null | grep '\.sh$' | sed 's/\.sh$//')
         COMPREPLY=($(compgen -W "$available_groups" -- "${COMP_WORDS[1]}"))
     }

@@ -26,7 +26,8 @@ alias tw-adj='tw-now --date'
 alias tw-rsync='rsync -r "$HOME/.timewarrior/" "$HOME/Historical/Backup/TimeTracking/TimeWarrior/2026/"'
 
 # Executes the custom Python script to parse locked/unlocked logs and insert breaks
-alias tw-addbreak='python3 "$HOME/scripts/addbreak.py"'
+alias tw-end='$HOME/.config/mooseware/bin/tw_sync.py --end'
+alias tw-begin='$HOME/.config/mooseware/bin/tw_sync.py --begin'
 
 # -------------------------------------------------------------------
 # Functions
@@ -36,7 +37,7 @@ alias tw-addbreak='python3 "$HOME/scripts/addbreak.py"'
 locklogs() {
     local file
     # Find the most recently modified log file
-    file="$(ls -t "$HOME"/scripts/logs/Log_*.txt 2>/dev/null | head -n 1)"
+    file="$(ls -t "$HOME"/.config/mooseware/logs/Log_*.txt 2>/dev/null | head -n 1)"
     
     if [ -n "$file" ]; then
         echo -e "=== Last 10 lines of: $(basename "$file") ===\n"
