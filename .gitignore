@@ -1,0 +1,7 @@
+scratch/
+*.DS_Store
+.idea/
+.vscode/
+win/
+__pycache__/
+*.py[cod]
