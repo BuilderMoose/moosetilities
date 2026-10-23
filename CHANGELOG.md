@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.1
+
+### Changed
+
+- **Alias Manager (`alias-manager/alias-manager.sh`)**:
+  - Updated `a` default group listing to use single-space separation instead of padded columns.
+  - Updated `a` to accept and display multiple alias groups in a single invocation.
+  - Enhanced Bash and Zsh tab completion (`_a_completions` and `_a_completions_zsh`) to support completing multiple groups while filtering out already-selected arguments.
+
 ## 0.1.0
 
 Initial release of the Moosetilities toolkit: a modular Bash/Zsh alias manager, an event-driven screen lock and sleep session tracker for macOS and Linux, and automated Timewarrior gap-synchronization utilities.
