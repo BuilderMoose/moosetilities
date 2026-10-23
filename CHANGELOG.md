@@ -8,6 +8,10 @@
   - Updated `a` default group listing to use single-space separation instead of padded columns.
   - Updated `a` to accept and display multiple alias groups in a single invocation.
   - Enhanced Bash and Zsh tab completion (`_a_completions` and `_a_completions_zsh`) to support completing multiple groups while filtering out already-selected arguments.
+- **Timewarrior Integrations (`timewarrior/scripts/tw_sync.py`)**:
+  - Added `SESSION START` fallback in `--begin` and `--break` so sessions can be started immediately after a reboot before any lock/unlock cycle occurs.
+  - Added `SESSION END` detection and previous-log fallback for lock/sleep timestamps across mid-day reboots.
+  - Added guards in `--begin` to prevent auto-closing unclosed segments from previous days or stopping an active segment before its start time.
 
 ## 0.1.0
 

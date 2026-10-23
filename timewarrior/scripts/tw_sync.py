@@ -34,12 +34,15 @@ def parse_tw_start_local(tw_start_str):
     utc_dt = datetime.strptime(tw_start_str, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
     return utc_dt.astimezone().replace(tzinfo=None)
 
-def get_latest_log():
+def get_recent_logs():
     log_files = glob.glob(os.path.join(LOG_DIR, "Log_*.txt"))
     if not log_files:
         print(f"Error: No log files found in {LOG_DIR}")
         sys.exit(1)
-    return max(log_files, key=os.path.getmtime)
+    return sorted(log_files, key=os.path.getmtime, reverse=True)
+
+def get_latest_log():
+    return get_recent_logs()[0]
 
 def get_mac_sleep_timer_minutes():
     try:
@@ -69,18 +72,22 @@ def get_event_time(event_type, latest_log):
             sys.exit(1)
     return None
 
+def get_begin_time(latest_log):
+    last_unlocked = get_event_time("STATUS: UNLOCKED", latest_log)
+    session_start = get_event_time("SESSION START", latest_log)
+    if last_unlocked and session_start:
+        return max(last_unlocked, session_start)
+    return last_unlocked or session_start
+
 def get_lock_time(latest_log):
     last_locked = get_event_time("STATUS: LOCKED", latest_log)
     last_sleep = get_event_time("STATUS: ABOUT TO SLEEP", latest_log)
+    session_end = get_event_time("SESSION END", latest_log)
     
-    event_time = None
-    if last_locked and last_sleep:
-        event_time = max(last_locked, last_sleep)
-    else:
-        event_time = last_locked or last_sleep
-        
-    if not event_time:
+    candidates = [t for t in (last_locked, last_sleep, session_end) if t is not None]
+    if not candidates:
         return None
+    event_time = max(candidates)
 
     if event_time == last_sleep and (not last_locked or last_sleep > last_locked):
         sleep_mins = get_mac_sleep_timer_minutes()
@@ -89,6 +96,14 @@ def get_lock_time(latest_log):
             event_time = event_time - timedelta(minutes=sleep_mins)
 
     return event_time
+
+def get_latest_lock_time(logs):
+    # Check latest log first; if no lock event (e.g. fresh reboot), check the previous log
+    for log_file in logs[:2]:
+        lock_time = get_lock_time(log_file)
+        if lock_time:
+            return lock_time
+    return None
 
 def handle_end():
     latest_log = get_latest_log()
@@ -114,27 +129,45 @@ def handle_end():
     print("Done.")
 
 def handle_begin():
-    latest_log = get_latest_log()
-    last_unlocked = get_event_time("STATUS: UNLOCKED", latest_log)
+    logs = get_recent_logs()
+    latest_log = logs[0]
+    begin_time = get_begin_time(latest_log)
 
-    if not last_unlocked:
-        print("Error: Could not find UNLOCKED in the latest log.")
+    if not begin_time:
+        print("Error: Could not find UNLOCKED or SESSION START in the latest log.")
         sys.exit(1)
 
     now = datetime.now()
-    if last_unlocked.date() != now.date():
-        print(f"Error: The unlock event did not occur today ({now.date()}).")
+    if begin_time.date() != now.date():
+        print(f"Error: The start/unlock event did not occur today ({now.date()}).")
         sys.exit(1)
 
     tw_data = get_tw_data()
     
-    begin_time_str = last_unlocked.strftime("%Y-%m-%dT%H:%M:%S")
+    begin_time_str = begin_time.strftime("%Y-%m-%dT%H:%M:%S")
 
     if tw_data and "end" not in tw_data[-1]:
+        active_start = parse_tw_start_local(tw_data[-1]["start"])
+        active_start_str = active_start.strftime("%Y-%m-%dT%H:%M:%S")
+
+        if active_start.date() != now.date():
+            print(
+                f"Error: Active segment started on a previous day ({active_start_str}). "
+                "Please stop it manually before starting today's session."
+            )
+            sys.exit(1)
+
+        if active_start >= begin_time:
+            print(
+                f"Error: Active segment started ({active_start_str}) at or after "
+                f"the latest start/unlock time ({begin_time_str})."
+            )
+            sys.exit(1)
+
         # There's an active segment. Let's try to close it at the lock time.
-        lock_time = get_lock_time(latest_log)
+        lock_time = get_latest_lock_time(logs)
         
-        if lock_time and lock_time <= last_unlocked:
+        if lock_time and active_start < lock_time <= begin_time:
             stop_time_str = lock_time.strftime("%Y-%m-%dT%H:%M:%S")
             print(f"Active segment detected. Stopping it at lock time {stop_time_str}...")
             run_tw(["stop", stop_time_str])
@@ -148,12 +181,13 @@ def handle_begin():
     print("Done.")
 
 def handle_break():
-    latest_log = get_latest_log()
-    lock_time = get_lock_time(latest_log)
-    last_unlocked = get_event_time("STATUS: UNLOCKED", latest_log)
+    logs = get_recent_logs()
+    latest_log = logs[0]
+    lock_time = get_latest_lock_time(logs)
+    last_unlocked = get_begin_time(latest_log)
 
     if not lock_time or not last_unlocked:
-        print("Error: Could not find both a LOCKED/SLEEP and UNLOCKED status in the latest log.")
+        print("Error: Could not find both a LOCKED/SLEEP and UNLOCKED/SESSION START status in the latest logs.")
         sys.exit(1)
 
     now = datetime.now()
