@@ -64,16 +64,17 @@ Conversation () {
     twan "$1"
 }
 
-# HELP: Retags a target entry with the tags from a source entry (e.g., twr @1 @4)
+# HELP: Retags a target entry (default @1) with the tags from a source entry (e.g., twr @4 or twr @4 @2)
 twr() {
-    if [[ -z "$1" || -z "$2" ]]; then
+    if [[ -z "$1" ]]; then
         echo "Retag an entry with the tags from another entry"
-        echo "Usage: twr <target_id> <source_id> (e.g., twr @1 @4)"
+        echo "Usage: twr <source_id> [target_id=@1] (e.g., twr @4 or twr @4 @2)"
         return 1
     fi
 
-    local target_id="${1#@}"
-    local source_id="${2#@}"
+    local source_id="${1#@}"
+    local target_arg="${2:-1}"
+    local target_id="${target_arg#@}"
     local source_tags
 
     source_tags=$(timew get "dom.tracked.${source_id}.tags")
@@ -87,7 +88,7 @@ twr() {
     # properly before passing them to timew.
     echo "$source_tags" | xargs timew retag "@${target_id}"
 
-    echo "Successfully applied tags [ $source_tags ] to @${target_id}"
+    echo "Successfully applied tags [ $source_tags ] from @${source_id} to @${target_id}"
 }
 
 # HELP: Internal month calculator; maps names to numbers and handles year boundaries

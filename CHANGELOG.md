@@ -14,6 +14,7 @@
   - Added guards in `--begin` to prevent auto-closing unclosed segments from previous days or stopping an active segment before its start time.
 - **Timewarrior Integrations (`timewarrior/aliases/timewarrior.sh`)**:
   - Updated `locklogs` to accept an optional line count (`locklogs [n]`, defaulting to 10) and display entries across multiple recent log files in chronological order.
+  - Updated `twr` argument order to standard `<source_id> [target_id]` (defaulting `target_id` to `@1`).
 
 ## 0.1.0
 
