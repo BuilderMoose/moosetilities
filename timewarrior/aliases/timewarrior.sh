@@ -34,15 +34,20 @@ alias tw-addbreak='$HOME/.config/mooseware/bin/tw_sync.py --break'
 # Functions
 # -------------------------------------------------------------------
 
-# HELP: Displays the last 10 lines of the most recent lock/unlock log file
+# HELP: Displays the last N lines (default 10) across the most recent lock/unlock log files
 locklogs() {
-    local file
-    # Find the most recently modified log file
-    file="$(ls -t "$HOME"/.config/mooseware/logs/Log_*.txt 2>/dev/null | head -n 1)"
-    
-    if [ -n "$file" ]; then
-        echo -e "=== Last 10 lines of: $(basename "$file") ===\n"
-        tail -n 10 "$file"
+    local count="${1:-10}"
+    if ! [[ "$count" =~ ^[0-9]+$ ]] || [ "$count" -le 0 ]; then
+        echo "Usage: locklogs [count] (count must be a positive integer)"
+        return 1
+    fi
+
+    local -a files
+    files=($(ls -1 "$HOME"/.config/mooseware/logs/Log_*.txt 2>/dev/null | tail -n "$count"))
+
+    if [ "${#files[@]}" -gt 0 ]; then
+        echo -e "=== Last $count log entries ===\n"
+        cat "${files[@]}" | tail -n "$count"
     else
         echo "No log files found."
     fi

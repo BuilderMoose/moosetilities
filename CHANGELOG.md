@@ -12,6 +12,8 @@
   - Added `SESSION START` fallback in `--begin` and `--break` so sessions can be started immediately after a reboot before any lock/unlock cycle occurs.
   - Added `SESSION END` detection and previous-log fallback for lock/sleep timestamps across mid-day reboots.
   - Added guards in `--begin` to prevent auto-closing unclosed segments from previous days or stopping an active segment before its start time.
+- **Timewarrior Integrations (`timewarrior/aliases/timewarrior.sh`)**:
+  - Updated `locklogs` to accept an optional line count (`locklogs [n]`, defaulting to 10) and display entries across multiple recent log files in chronological order.
 
 ## 0.1.0
 
