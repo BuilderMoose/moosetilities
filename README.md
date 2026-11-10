@@ -21,7 +21,7 @@ You are highly encouraged to run `git init` inside `~/.config/mooseware/` and tu
 
 Each tool in this repository is self-contained in its own directory:
 
-- **[`alias-manager/`](alias-manager/)**: A modular Bash/Zsh alias management system. Prevents `.bashrc` bloat by allowing you to categorize aliases and functions into drop-in files, complete with an interactive autoloader and tab completion.
+- **[`alias-manager/`](alias-manager/)**: A modular Bash/Zsh alias management system. Prevents `.bashrc` bloat by allowing you to categorize aliases and functions into drop-in files, complete with colorized output, selectable display styles (sections, table, cards), and cross-shell tab completion.
 - **[`session-tracker/`](session-tracker/)**: A cross-platform, background session monitor that captures screen lock, unlock, and sleep events to `~/.config/mooseware/logs/`.
 - **[`timewarrior/`](timewarrior/)**: Timewarrior aliases, helper functions, and automated gap-synchronization scripts (`tw_sync.py`) that integrate with `alias-manager` and `session-tracker`.
 - _(More tools coming soon: C++ utilities like `moosecount`, Timewarrior hooks, and various terminal toys)_

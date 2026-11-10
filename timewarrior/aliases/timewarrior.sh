@@ -60,8 +60,8 @@ Conversation () {
         return 0
     fi
 
-    tw start Conversation
-    twan "$1"
+    timew start Conversation
+    timew annotate "$1"
 }
 
 # HELP: Retags a target entry (default @1) with the tags from a source entry (e.g., twr @4 or twr @4 @2)

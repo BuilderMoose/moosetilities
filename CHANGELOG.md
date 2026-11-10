@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.1.2
+
+### Added
+
+- **Alias Manager (`alias-manager/alias-manager.sh`)**:
+  - Added 3 selectable display styles: Categorized Sections (`-2`, default), Compact Table (`-1`), and Cards (`-3`).
+  - Added `MOOSE_ALIAS_STYLE` environment variable to configure the global default style.
+  - Added `-h` / `--help` usage flag.
+  - Added formatted bullet indicators and usage guidance when `a` is run without arguments.
+  - Enhanced Bash and Zsh tab completion to support style flags.
+
+### Changed
+
+- **Alias Manager (`alias-manager/alias-manager.sh`)**:
+  - Replaced inline printing with buffered parsing, clean name/value splitting, dynamic column alignment, and ANSI color themes.
+  - Added support for `# HELP:` docstrings above standard aliases.
+- **Timewarrior Integrations (`timewarrior/aliases/timewarrior.sh`)**:
+  - Updated `Conversation()` to invoke `timew` directly rather than relying on aliases `tw` and `twan`.
+- **Documentation (`README.md`, `alias-manager/README.md`)**:
+  - Documented display styles, CLI flags, configuration variables, and example terminal outputs.
+
 ## 0.1.1
 
 ### Changed

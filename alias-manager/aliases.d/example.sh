@@ -15,7 +15,7 @@ fi
 
 # HELP: Displays a scholarly moose greeting
 moose_greet() {
-    echo "Greetings! I am the scholarly moose. 🦌📚"
+    echo "Greetings! Hello from the scholarly moose. 🦌📚"
 }
 
 # A hidden, internal helper function (ignored by the 'a' command because it starts with an underscore)

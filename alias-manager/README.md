@@ -7,8 +7,10 @@ A scalable, modular system for managing Bash and Zsh aliases and functions. This
 - **Modular Design:** Aliases are separated into purpose-specific files (e.g., `timewarrior.sh`, `core.sh`, `toys.sh`).
 - **Dynamic Autoloader:** Sourcing a single directory automatically loads all your alias groups.
 - **The `a` Command:** A built-in utility to list your aliases by category.
+- **Colorized Multi-Style Display:** View your commands in 3 formats (Categorized Sections, Compact Table, or Cards) with dynamic column alignment and ANSI syntax coloring.
+- **Configurable Defaults:** Set your favorite display style globally via `MOOSE_ALIAS_STYLE`.
 - **Tab Completion:** Type `a <TAB>` to see available alias groups, or auto-complete a specific group name. Works natively in both Bash and Zsh.
-- **Function Documentation:** Extracts `# HELP:` comments above your functions to display clean documentation in the terminal.
+- **Inline Documentation:** Extracts `# HELP:` comments above aliases and functions to display clean, aligned descriptions in the terminal.
 - **Privacy Rule:** Silently ignores any functions that begin with an underscore (e.g., `_helper_function()`), treating them as private/internal.
 
 ## Repository Structure
@@ -77,6 +79,68 @@ A scalable, modular system for managing Bash and Zsh aliases and functions. This
    source ~/.bashrc   # Or source ~/.zshrc if using Zsh
    ```
 
+## Using the `a` Command
+
+### Listing Available Groups
+
+Run `a` with no arguments to see all configured alias groups:
+
+```bash
+a
+```
+
+**Example Output:**
+```text
+Available alias groups:
+  • core
+  • git
+  • timewarrior
+
+Usage: a [-1|-2|-3] <group...>
+```
+
+### Viewing a Group
+
+Inspect aliases and functions inside any group:
+
+```bash
+a example
+```
+
+### Display Styles & Flags
+
+You can switch between 3 formatting layouts on the fly:
+
+* **Option 2 (Default) — Categorized Sections (`-2`, `-s`, `--sections`):**
+  Separates aliases and functions under distinct subheaders with command values and `# HELP:` notes neatly indented.
+  ```bash
+  a -2 example
+  # or
+  a --sections example
+  ```
+* **Option 1 — Compact Table (`-1`, `-t`, `--table`):**
+  Single column-aligned table for quick scannability.
+  ```bash
+  a -1 example
+  # or
+  a --table example
+  ```
+* **Option 3 — Cards (`-3`, `-c`, `--card`, `--cards`):**
+  Two-line block style (`name → command`), ideal for terminals with narrower widths or longer commands.
+  ```bash
+  a -3 example
+  # or
+  a --card example
+  ```
+
+### Setting a Global Default Style
+
+Set `MOOSE_ALIAS_STYLE` in your `~/.bashrc` or `~/.zshrc`:
+
+```bash
+export MOOSE_ALIAS_STYLE=2   # Options: 1 (table), 2 (sections), 3 (cards)
+```
+
 ## How to Add or Modify Aliases
 
 Take a look at [`../timewarrior/aliases/timewarrior.sh`](../timewarrior/aliases/timewarrior.sh) for a robust, real-world example of how to structure your custom tools!
@@ -87,6 +151,13 @@ Simply open the relevant file in the `aliases.d/` directory (or create a new `.s
 
 ```bash
 alias tw='timew'
+alias tws='tw summary :annotation :ids'
+```
+
+You can optionally place a `# HELP:` comment directly above an alias to provide a description:
+
+```bash
+# HELP: Fast summary with annotations and IDs
 alias tws='tw summary :annotation :ids'
 ```
 
